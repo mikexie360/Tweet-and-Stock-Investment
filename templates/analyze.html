@@ -1,0 +1,132 @@
+{% block content %}
+<html lang="en-us">
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="preload">
+    </head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+    <style>
+        body {
+            background-color: #F9F5FF;
+            font-family: 'Trebuchet MS', sans-serif;
+            margin-top: 50;
+        }
+        /* .center {    
+            margin: auto;
+        }
+        img {
+            max-width:100%;
+            max-height:100%;
+        } */
+        {% if companyList|length > 3 %}
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        {% endif %}
+        /*.td1 {
+            margin:auto;
+            max-width:100%;
+            max-height:100%;
+        } */
+    </style>
+
+    <div class="topbackground" align="center">
+        <div class="container-fluid center" align="center">
+            <div class="text-center" align="center" style="margin-bottom: 50;">
+                <h1 style="font-size:50;" align="center"><b>Financial Decision Maker</b></h1>
+                <h3>Calculates the best financial decision based on tweets and historical stock market data</h3>
+            </div>
+        </div>
+    </div>
+
+    <div align="center">
+        <div class="container" align="center">
+            <form align="center" method="POST" action="{{ url_for('analyze')}}" id="myForm">
+                <textarea class="form-control" placeholder="Enter list of company tickers separated by commas (e.g. AAPL, MSFT, IBM)" 
+                    rows="2" cols="40" name="rawText" style="margin-bottom: 10;"></textarea>
+                <input type="submit" onclick="myAnalyzer()" value="Submit" class="btn btn-primary">
+                <a href="{{url_for('index')}}" type="button" class="btn btn-danger">Reset</a>
+            </form>
+        </div>
+    </div>
+
+    <div align="center" class="botbackground" style="margin-top: 100;">
+        <h3 style="margin-bottom: 50;">Best Recommendation: {{BestRecommendation}}</h3>
+        <p></p>
+        <div class="container center">
+            <div class="row">
+                <div class="col-sm">
+                    {% if companyList|length == 0 %}
+                        <h2>No companies found, please try again. :)</h2>
+                    {% else %}
+                        <h2 style="margin-bottom: 20">Your Selected Companies</h2>
+                    {% endif %}
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div align="center" class="container-fluid center">
+        
+        
+        
+            <table align="center" class="center table table-light table-striped table-hover table-sm">
+                <thead align="center">
+                <tr class="center">
+                    {% for company in companyList %}
+                    <th class="center"> <h1 class="center" style="font-size:30px">{{company}}</h1></th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody align="center">
+                    <tr>
+                        {% for i in CostStockList %}
+                            <td>Stock Currently Costs: {{i}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for i in OverallSentiment %}
+                            <td>Sentiment Analysis Overall Score: {{i}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for i in HistoricalDataOverTwitterSentiment %}
+                            <td><img src="{{i}}"></td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for i in VolatilityScore %}
+                            <td> Volatile Score: {{i}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for i in OverallRecommendation %}
+                            <td>Overall Reconmendation: {{i}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for i in TweetsToDisplay %}
+                        <td class="td1">
+                            <blockquote class="twitter-tweet">
+                                <a href="' + {{i}} + '"></a>
+                            </blockquote> 
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                        </td> 
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <br>
+        <br>
+</html>
+{% endblock %}
